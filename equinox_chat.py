@@ -11,21 +11,27 @@ st.set_page_config(
 )
 
 # ── Vertex AI 인증 ───────────────────────────────────────────────
-# 기존 Vertex AI 호출 부분 제거 후 아래 코드로 교체:
-response = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-   # messages 리스트 구성 시 char["prompt"] 사용
-response = client.chat.completions.create(
-    model="llama-3.3-70b-versatile",
-    messages=[
-        {"role": "system", "content": char["prompt"]},
-        *st.session_state.messages  # 기존 대화 기록
-    ]
-)
+if send and user_input.strip():
+            st.session_state.messages.append({"role": "user", "content": user_input})
 
-# 답변 텍스트 추출
-answer = response.choices[0].message.content
-st.write(answer)
+            try:
+                # 1. System 프롬프트 + 이전 대화 기록을 Groq 형식에 맞게 구성
+                formatted_messages = [{"role": "system", "content": char["prompt"]}]
+                for msg in st.session_state.messages:
+                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
+
+                # 2. Groq API 호출
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=formatted_messages
+                )
+                reply = response.choices[0].message.content
+
+            except Exception as e:
+                reply = f"...지금은 대화하기 어렵습니다. ({e})"
+
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+            st.rerun()
 
 # ── 공통 멤버 정보 ────────────────────────────────────────────────
 MEMBERS_INFO = """
