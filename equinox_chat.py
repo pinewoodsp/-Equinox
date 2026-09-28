@@ -467,16 +467,14 @@ def main():
         with col2:
             send = st.button("전송", use_container_width=True)
 
-        if send and user_input.strip():
+       if send and user_input.strip():
             st.session_state.messages.append({"role": "user", "content": user_input})
 
-          try:
-                # Groq 형식에 맞춰 메시지 목록 생성
+            try:
                 formatted_messages = [{"role": "system", "content": char["prompt"]}]
                 for msg in st.session_state.messages:
                     formatted_messages.append({"role": msg["role"], "content": msg["content"]})
 
-                # Groq API 호출
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=formatted_messages
@@ -484,9 +482,6 @@ def main():
                 reply = response.choices[0].message.content
             except Exception as e:
                 reply = f"...지금은 대화하기 어렵습니다. ({e})"
+
             st.session_state.messages.append({"role": "assistant", "content": reply})
             st.rerun()
-
-
-if __name__ == "__main__":
-    main()
