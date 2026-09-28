@@ -10,29 +10,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# ── Vertex AI 인증 ───────────────────────────────────────────────
-if send and user_input.strip():
-            st.session_state.messages.append({"role": "user", "content": user_input})
-
-            try:
-                # 1. System 프롬프트 + 이전 대화 기록을 Groq 형식에 맞게 구성
-                formatted_messages = [{"role": "system", "content": char["prompt"]}]
-                for msg in st.session_state.messages:
-                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
-
-                # 2. Groq API 호출
-                response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=formatted_messages
-                )
-                reply = response.choices[0].message.content
-
-            except Exception as e:
-                reply = f"...지금은 대화하기 어렵습니다. ({e})"
-
-            st.session_state.messages.append({"role": "assistant", "content": reply})
-            st.rerun()
-
 # ── 공통 멤버 정보 ────────────────────────────────────────────────
 MEMBERS_INFO = """
 【에키녹스 멤버 공통 정보】
@@ -493,21 +470,20 @@ def main():
         if send and user_input.strip():
             st.session_state.messages.append({"role": "user", "content": user_input})
 
-            try:
-                model = GenerativeModel(
-                    "gemini-3.1-pro-preview",
-                    system_instruction=char["prompt"],
+          try:
+                # Groq 형식에 맞춰 메시지 목록 생성
+                formatted_messages = [{"role": "system", "content": char["prompt"]}]
+                for msg in st.session_state.messages:
+                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
+
+                # Groq API 호출
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=formatted_messages
                 )
-                history = [
-                    Content(role=m["role"], parts=[Part.from_text(m["content"])])
-                    for m in st.session_state.messages[:-1]
-                ]
-                chat = model.start_chat(history=history)
-                response = chat.send_message(user_input)
-                reply = response.text
+                reply = response.choices[0].message.content
             except Exception as e:
                 reply = f"...지금은 대화하기 어렵습니다. ({e})"
-
             st.session_state.messages.append({"role": "assistant", "content": reply})
             st.rerun()
 
