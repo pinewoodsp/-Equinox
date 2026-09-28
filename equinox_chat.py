@@ -465,23 +465,26 @@ def main():
                 label_visibility="collapsed", key="chat_input"
             )
         with col2:
-            send = st.button("전송", use_container_width=True)
+# 1) 버튼 및 입력 처리 (스페이스바 4칸 기준)
+    send = st.button("전송")
 
-       if send and user_input.strip():
-            st.session_state.messages.append({"role": "user", "content": user_input})
+    if send and user_input.strip():
+        # (여기서부터는 스페이스바 8칸)
+        st.session_state.messages.append({"role": "user", "content": user_input})
 
-            try:
-                formatted_messages = [{"role": "system", "content": char["prompt"]}]
-                for msg in st.session_state.messages:
-                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
+        try:
+            # (여기서부터는 스페이스바 12칸)
+            formatted_messages = [{"role": "system", "content": char["prompt"]}]
+            for msg in st.session_state.messages:
+                formatted_messages.append({"role": msg["role"], "content": msg["content"]})
 
-                response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
-                    messages=formatted_messages
-                )
-                reply = response.choices[0].message.content
-            except Exception as e:
-                reply = f"...지금은 대화하기 어렵습니다. ({e})"
+            response = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=formatted_messages
+            )
+            reply = response.choices[0].message.content
+        except Exception as e:
+            reply = f"...지금은 대화하기 어렵습니다. ({e})"
 
-            st.session_state.messages.append({"role": "assistant", "content": reply})
-            st.rerun()
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        st.rerun()
