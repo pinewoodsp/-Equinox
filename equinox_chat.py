@@ -1,8 +1,7 @@
 import streamlit as st
-import vertexai
-from vertexai.generative_models import GenerativeModel, Content, Part
-from google.oauth2 import service_account
-import streamlit.components.v1 as components
+from groq import Groq
+
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 # ── 페이지 설정 ──────────────────────────────────────────────────
 st.set_page_config(
@@ -12,25 +11,20 @@ st.set_page_config(
 )
 
 # ── Vertex AI 인증 ───────────────────────────────────────────────
-@st.cache_resource
-def init_vertex():
-    sa = st.secrets["gcp_service_account"]
-    sa_info = {k: sa[k] for k in [
-        "type", "project_id", "private_key_id", "private_key",
-        "client_email", "client_id", "auth_uri", "token_uri",
-        "auth_provider_x509_cert_url", "client_x509_cert_url",
-    ]}
-    credentials = service_account.Credentials.from_service_account_info(
-        sa_info,
-        scopes=["https://www.googleapis.com/auth/cloud-platform"]
-    )
-    vertexai.init(
-        project=sa_info["project_id"],
-        location="global",
-        credentials=credentials,
-    )
+# 기존 Vertex AI 호출 부분 제거 후 아래 코드로 교체:
+response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[
+        {"role": "system", "content": char_info["prompt"]},
+        {"role": "user", "content": prompt}
+    ],
+    temperature=0.7,
+    max_tokens=1024
+)
 
-init_vertex()
+# 답변 텍스트 추출
+answer = response.choices[0].message.content
+st.write(answer)
 
 # ── 공통 멤버 정보 ────────────────────────────────────────────────
 MEMBERS_INFO = """
