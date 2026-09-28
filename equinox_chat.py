@@ -14,12 +14,13 @@ st.set_page_config(
 # 기존 Vertex AI 호출 부분 제거 후 아래 코드로 교체:
 response = client.chat.completions.create(
     model="llama-3.3-70b-versatile",
+   # messages 리스트 구성 시 char["prompt"] 사용
+response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
     messages=[
-        {"role": "system", "content": char_info["prompt"]},
-        {"role": "user", "content": prompt}
-    ],
-    temperature=0.7,
-    max_tokens=1024
+        {"role": "system", "content": char["prompt"]},
+        *st.session_state.messages  # 기존 대화 기록
+    ]
 )
 
 # 답변 텍스트 추출
