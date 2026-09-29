@@ -464,13 +464,10 @@ def main():
                 "", placeholder=f"{char['name']}에게 말하기...",
                 label_visibility="collapsed", key="chat_input"
             )
-        # 예시: 467번째 줄의 with 구문 위치
-    with col2:  # (467번째 줄)
-        # with 안쪽으로 들어오므로 스페이스바 4칸 추가
-        send = st.button("전송")
+        with col2:
+            send = st.button("전송")
 
         if send and user_input.strip():
-            # if 안쪽은 스페이스바 4칸 더 추가
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             try:
