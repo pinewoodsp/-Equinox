@@ -1,9 +1,12 @@
-import streamlit as st
-from groq import Groq
+def inject_css(char_color: str):
+    st.markdown(f"""
+    <style>
+    .stApp {{
+        background-color: #0A0A0F;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
 
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
-
-st.set_page_config(page_title="EQUINOX", page_icon="⚔️", layout="wide")
-
-st.title("1단계 테스트")
-st.write("여기까지 보이면 정상")
+inject_css("#C9A84C")
+st.title("2단계 테스트")
+st.write("CSS 적용 후에도 보이면 정상")
