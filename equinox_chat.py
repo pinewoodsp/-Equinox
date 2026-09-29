@@ -469,7 +469,7 @@ def main():
         with col2:
             send = st.button("전송")
 
-                if send and user_input.strip():
+        if send and user_input.strip():
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             try:
