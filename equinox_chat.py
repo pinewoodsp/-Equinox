@@ -3,18 +3,12 @@ from groq import Groq
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.set_page_config(page_title="EQUINOX", page_icon="⚔️", layout="wide")
-
-def inject_css(char_color: str):
-    st.markdown(f"""
-    <style>
-    .stApp {{
-        background-color: #0A0A0F;
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-
-inject_css("#C9A84C")
+# ── 페이지 설정 ──────────────────────────────────────────────────
+st.set_page_config(
+    page_title="EQUINOX · 에키녹스의 검",
+    page_icon="⚔️",
+    layout="wide",
+)
 
 # ── 공통 멤버 정보 ────────────────────────────────────────────────
 MEMBERS_INFO = """
@@ -182,5 +176,319 @@ CHARACTERS = {
 }
 
 
-st.title("3단계 테스트")
-st.write(list(CHARACTERS.keys()))
+
+# ── CSS ───────────────────────────────────────────────────────────
+def inject_css(char_color: str):
+    st.markdown(f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap');
+    html, body, [class*="css"] {{
+        font-family: 'Noto Sans KR', sans-serif;
+        background-color: #0A0A0F;
+        color: #E8E8F0;
+    }}
+    .stApp {{
+        background-color: #0A0A0F;
+        background-image:
+            radial-gradient(ellipse at 20% 20%, #12121E 0%, #0A0A0F 60%),
+            repeating-linear-gradient(0deg, transparent, transparent 40px, #ffffff06 40px, #ffffff06 41px),
+            repeating-linear-gradient(90deg, transparent, transparent 40px, #ffffff06 40px, #ffffff06 41px);
+    }}
+    .equinox-header {{
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 18px 0 22px; border-bottom: 1px solid #ffffff0F; margin-bottom: 32px;
+    }}
+    .equinox-header-left {{ display: flex; align-items: center; gap: 14px; }}
+    .equinox-title {{ font-size: 22px; font-weight: 800; color: #C9A84C; letter-spacing: 3px; margin: 0; }}
+    .equinox-sub {{ font-size: 11px; color: #444; letter-spacing: 4px; margin-top: 2px; }}
+    .equinox-mode {{ font-size: 11px; color: #444; letter-spacing: 3px; }}
+    .gallery-title-wrap {{ text-align: center; margin-bottom: 36px; }}
+    .gallery-label {{ font-size: 11px; letter-spacing: 6px; color: #444; margin-bottom: 8px; }}
+    .gallery-title {{ font-size: 28px; font-weight: 800; color: #E8E8F0; letter-spacing: 1px; margin: 0; }}
+    .gallery-sub {{ font-size: 14px; color: #444; margin-top: 10px; }}
+    .char-card {{
+        background: linear-gradient(145deg, {char_color}0E 0%, #0A0A14 60%);
+        border: 1px solid {char_color}55; border-radius: 18px; padding: 20px;
+        position: relative; overflow: hidden; margin-bottom: 14px; transition: all .25s;
+    }}
+    .char-card:hover {{
+        border-color: {char_color}88;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 32px {char_color}22;
+    }}
+    .char-top-line {{
+        position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, {char_color}88, transparent);
+    }}
+    .char-emoji-wrap {{
+        width: 44px; height: 44px; border-radius: 13px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 21px; flex-shrink: 0;
+        border: 1.5px solid {char_color}55;
+    }}
+    .char-name {{ font-size: 15px; font-weight: 700; color: #E2E2F0; }}
+    .char-mbti {{ font-size: 10px; margin-top: 2px; letter-spacing: 1px; }}
+    .char-badge {{
+        font-size: 9px; padding: 3px 8px; border-radius: 12px; white-space: nowrap;
+    }}
+    .char-role {{ font-size: 10px; letter-spacing: 2px; margin-bottom: 8px; }}
+    .char-desc {{ font-size: 12px; color: #44445A; line-height: 1.65; margin-bottom: 10px; }}
+    .char-tag {{
+        display: inline-block; font-size: 10px; padding: 3px 9px; border-radius: 20px;
+        margin: 2px 2px 0 0;
+    }}
+    .char-footer {{
+        display: flex; justify-content: space-between; align-items: center;
+        margin-top: 10px; padding-top: 10px;
+    }}
+    .char-footer-mbti {{ font-size: 10px; letter-spacing: 1px; }}
+    .stButton > button {{
+        background: transparent !important;
+        color: {char_color} !important;
+        border: 1.5px solid {char_color}99 !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important; font-size: 13px !important;
+        padding: 8px 0 !important; transition: all .2s !important;
+    }}
+    .stButton > button:hover {{
+        background: {char_color}18 !important;
+        border-color: {char_color} !important;
+    }}
+    .chat-header {{
+        background: linear-gradient(135deg, {char_color}12, transparent);
+        border: 1px solid {char_color}33; border-radius: 16px;
+        padding: 16px 20px; margin-bottom: 24px;
+        display: flex; align-items: center; gap: 14px;
+    }}
+    .chat-avatar {{
+        width: 52px; height: 52px; border-radius: 16px;
+        background: {char_color}18; border: 2px solid {char_color}55;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 24px; box-shadow: 0 0 20px {char_color}33;
+    }}
+    .chat-name {{ font-size: 18px; font-weight: 700; color: {char_color}; }}
+    .chat-role {{ font-size: 12px; color: #555; margin-top: 2px; }}
+    .chat-tag {{
+        font-size: 11px; padding: 3px 8px; border-radius: 6px;
+        background: {char_color}18; color: {char_color};
+        border: 1px solid {char_color}44; margin: 2px;
+    }}
+    .msg-user {{
+        background: {char_color}CC; color: #0A0A0F;
+        border-radius: 16px 16px 4px 16px; padding: 10px 14px;
+        max-width: 72%; margin-left: auto; margin-bottom: 10px;
+        font-size: 14px; font-weight: 600; box-shadow: 0 2px 12px {char_color}44;
+    }}
+    .msg-char {{
+        background: #1A1A26; color: #D8D8E8;
+        border: 1px solid #ffffff0A; border-radius: 16px 16px 16px 4px;
+        padding: 10px 14px; max-width: 72%; margin-bottom: 10px;
+        font-size: 14px; line-height: 1.6;
+    }}
+    .msg-wrap-user {{ display: flex; justify-content: flex-end; margin-bottom: 4px; }}
+    .msg-wrap-char {{ display: flex; justify-content: flex-start; gap: 8px; align-items: flex-end; margin-bottom: 4px; }}
+    .msg-avatar {{
+        width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+        background: {char_color}18; border: 1px solid {char_color}44;
+        display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }}
+    .stTextInput input {{
+        background: #1A1A26 !important; border: 1px solid {char_color}33 !important;
+        border-radius: 12px !important; color: #E8E8F0 !important;
+        padding: 10px 16px !important; font-size: 14px !important;
+    }}
+    .stTextInput input:focus {{ border-color: {char_color}88 !important; box-shadow: none !important; }}
+    [data-testid="stSidebar"] {{ background: #0D0D16 !important; border-right: 1px solid #ffffff08 !important; }}
+    [data-testid="stSidebar"] * {{ color: #E8E8F0 !important; }}
+    [data-testid="stSidebar"] .stButton > button {{
+        background: transparent !important; color: #C9A84C !important;
+        border: 1px solid #C9A84C66 !important;
+    }}
+    [data-testid="stSidebar"] .stButton > button:hover {{ background: #C9A84C18 !important; }}
+    hr {{ border-color: #ffffff0F !important; }}
+    footer {{ visibility: hidden; }}
+    #MainMenu {{ visibility: hidden; }}
+    div[data-testid="stVerticalBlock"] > div {{ gap: 0 !important; }}
+    </style>
+    """, unsafe_allow_html=True)
+
+
+# ── 메인 ──────────────────────────────────────────────────────────
+def main():
+    if "selected" not in st.session_state:
+        st.session_state.selected = None
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    char = st.session_state.selected
+    color = char["color"] if char else "#C9A84C"
+    inject_css(color)
+
+    mode_label = f"CHAT · {char['name']}" if char else "CHARACTER GALLERY"
+    st.markdown(f"""
+    <div class="equinox-header">
+        <div class="equinox-header-left">
+            <div><div class="equinox-title">EQUINOX</div></div>
+            <div class="equinox-sub">에키녹스의 검</div>
+        </div>
+        <div class="equinox-mode">{mode_label}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── 갤러리 뷰 ──────────────────────────────────────────────────
+    if char is None:
+        st.markdown("""
+        <div class="gallery-title-wrap">
+            <div class="gallery-label">INTERACTIVE</div>
+            <div class="gallery-title">캐릭터와 대화하기</div>
+            <div class="gallery-sub">캐릭터를 선택하면 직접 대화할 수 있어요</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        cols = st.columns(3)
+        for i, (cid, c) in enumerate(CHARACTERS.items()):
+            cc = c["color"]
+            with cols[i % 3]:
+                tags_html = "".join([
+                    f'<span style="display:inline-block;font-size:10px;padding:3px 9px;'
+                    f'border-radius:20px;background:{cc}18;color:{cc}BB;'
+                    f'border:1px solid {cc}33;margin:2px 2px 0 0;">{t}</span>'
+                    for t in c["tags"]
+                ])
+                origin = c.get("origin", "")
+                st.markdown(f"""
+                <div style="
+                    background:linear-gradient(145deg,{cc}0E 0%,#0A0A14 60%);
+                    border:1px solid {cc}55;border-radius:18px;padding:20px;
+                    position:relative;overflow:hidden;margin-bottom:14px;
+                    transition:all .25s;
+                ">
+                    <div style="position:absolute;top:0;left:0;right:0;height:1px;
+                        background:linear-gradient(90deg,transparent,{cc}88,transparent);"></div>
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                        <div style="width:44px;height:44px;border-radius:13px;
+                            display:flex;align-items:center;justify-content:center;
+                            font-size:21px;flex-shrink:0;background:{cc}18;
+                            border:1.5px solid {cc}55;">{c['emoji']}</div>
+                        <div style="flex:1;">
+                            <div style="font-size:15px;font-weight:700;color:#E2E2F0;">{c['name']}</div>
+                            <div style="font-size:10px;color:{cc}77;margin-top:2px;letter-spacing:1px;">{c['mbti']}</div>
+                        </div>
+                        <div style="font-size:9px;padding:3px 8px;border-radius:12px;
+                            white-space:nowrap;background:{cc}14;color:{cc}BB;
+                            border:1px solid {cc}44;">{origin}</div>
+                    </div>
+                    <div style="font-size:10px;letter-spacing:2px;color:{cc}AA;margin-bottom:8px;">{c['role']}</div>
+                    <div style="font-size:12px;color:#44445A;line-height:1.65;margin-bottom:10px;">{c.get('desc','')}</div>
+                    <div>{tags_html}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;
+                        margin-top:10px;padding-top:10px;border-top:1px solid {cc}22;">
+                        <span style="font-size:10px;color:{cc}44;letter-spacing:1px;">{c['mbti']}</span>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.markdown(f"""
+                <style>
+                div[data-testid="column"]:nth-child({(i % 3) + 1}) .stButton > button {{
+                    background: transparent !important;
+                    color: {cc} !important;
+                    border: 1.5px solid {cc}99 !important;
+                    border-radius: 10px !important;
+                    font-weight: 700 !important;
+                }}
+                div[data-testid="column"]:nth-child({(i % 3) + 1}) .stButton > button:hover {{
+                    background: {cc}18 !important;
+                    border-color: {cc} !important;
+                }}
+                </style>
+                """, unsafe_allow_html=True)
+
+                if st.button(f"{c['emoji']} 대화하기", key=cid, use_container_width=True):
+                    st.session_state.selected = c
+                    st.session_state.messages = [
+                        {"role": "assistant", "content": c["greeting"]}
+                    ]
+                    st.rerun()
+
+    # ── 채팅 뷰 ────────────────────────────────────────────────────
+    else:
+        with st.sidebar:
+            st.markdown(f"## {char['emoji']} {char['name']}")
+            st.markdown(f"**{char['role']}**")
+            st.markdown(f"`{char['mbti']}`")
+            st.markdown("---")
+            for t in char["tags"]:
+                st.markdown(f"- {t}")
+            st.markdown("---")
+            if st.button("← 갤러리로 돌아가기", use_container_width=True):
+                st.session_state.selected = None
+                st.session_state.messages = []
+                st.rerun()
+            if st.button("🔄 대화 초기화", use_container_width=True):
+                st.session_state.messages = [
+                    {"role": "assistant", "content": char["greeting"]}
+                ]
+                st.rerun()
+
+        tags_html = " ".join([f'<span class="chat-tag">{t}</span>' for t in char["tags"]])
+        st.markdown(f"""
+        <div class="chat-header">
+            <div class="chat-avatar">{char['emoji']}</div>
+            <div style="flex:1;">
+                <div class="chat-name">{char['name']}</div>
+                <div class="chat-role">{char['role']} · {char['mbti']}</div>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;">{tags_html}</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        for msg in st.session_state.messages:
+            if msg["role"] == "user":
+                st.markdown(f"""
+                <div class="msg-wrap-user">
+                    <div class="msg-user">{msg['content']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown(f"""
+                <div class="msg-wrap-char">
+                    <div class="msg-avatar">{char['emoji']}</div>
+                    <div class="msg-char">{msg['content']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        st.markdown("<div style='margin-bottom:16px'></div>", unsafe_allow_html=True)
+
+        col1, col2 = st.columns([5, 1])
+        with col1:
+            user_input = st.text_input(
+                "", placeholder=f"{char['name']}에게 말하기...",
+                label_visibility="collapsed", key="chat_input"
+            )
+        with col2:
+            send = st.button("전송")
+
+        if send and user_input.strip():
+            st.session_state.messages.append({"role": "user", "content": user_input})
+
+            try:
+                formatted_messages = [{"role": "system", "content": char["prompt"]}]
+                for msg in st.session_state.messages:
+                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
+
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=formatted_messages
+                )
+                reply = response.choices[0].message.content
+            except Exception as e:
+                reply = f"...지금은 대화하기 어렵습니다. ({e})"
+
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+            st.rerun()
+
+
+# ── 실행 ──────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    main()
