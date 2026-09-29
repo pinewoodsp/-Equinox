@@ -474,7 +474,7 @@ def main():
 
             try:
                 model = genai.GenerativeModel(
-                    model_name="gemini-2.0-flash",
+                    model_name="gemini-3.8-flash",
                     system_instruction=char["prompt"]
                 )
 
