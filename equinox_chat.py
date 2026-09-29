@@ -1,7 +1,7 @@
 import streamlit as st
-from groq import Groq
+import google.generativeai as genai
 
-client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # ── 페이지 설정 ──────────────────────────────────────────────────
 st.set_page_config(
@@ -469,19 +469,24 @@ def main():
         with col2:
             send = st.button("전송")
 
-        if send and user_input.strip():
+                if send and user_input.strip():
             st.session_state.messages.append({"role": "user", "content": user_input})
 
             try:
-                formatted_messages = [{"role": "system", "content": char["prompt"]}]
-                for msg in st.session_state.messages:
-                    formatted_messages.append({"role": msg["role"], "content": msg["content"]})
+                model = genai.GenerativeModel(
+                    model_name="gemini-2.0-flash",
+                    system_instruction=char["prompt"]
+                )
 
-                response = client.chat.completions.create(
-    model="openai/gpt-oss-120b",
-    messages=formatted_messages
-)
-                reply = response.choices[0].message.content
+                # Gemini는 role을 "user"/"model"로 사용하므로 변환
+                gemini_history = []
+                for msg in st.session_state.messages[:-1]:
+                    role = "model" if msg["role"] == "assistant" else "user"
+                    gemini_history.append({"role": role, "parts": [msg["content"]]})
+
+                chat = model.start_chat(history=gemini_history)
+                response = chat.send_message(user_input)
+                reply = response.text
             except Exception as e:
                 reply = f"...지금은 대화하기 어렵습니다. ({e})"
 
