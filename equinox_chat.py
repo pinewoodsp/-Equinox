@@ -1,5 +1,9 @@
 import streamlit as st
+from groq import Groq
 
-st.set_page_config(page_title="테스트", page_icon="⚔️")
-st.title("테스트 화면입니다")
-st.write("이 글씨가 보이면 Streamlit 자체는 정상 작동 중입니다.")
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+
+st.set_page_config(page_title="EQUINOX", page_icon="⚔️", layout="wide")
+
+st.title("1단계 테스트")
+st.write("여기까지 보이면 정상")
